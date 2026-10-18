@@ -1,0 +1,1659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IDA 2026-2027 - SMCH</title>
+    <!-- Google Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- jsPDF for direct A4 PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+        :root {
+            --bg-color: #fdfdfd;
+            --surface-color: #ffffff;
+            --primary: #111111;
+            --text-main: #222222;
+            --text-muted: #666666;
+            --border-color: #eaeaea;
+            --transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.7;
+            font-weight: 300;
+            overflow-x: hidden;
+        }
+
+        /* Minimalist Header & Navbar */
+        header {
+            background: rgba(253, 253, 253, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            animation: slideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .navbar {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .logo-img {
+            width: 38px;
+            height: 38px;
+            object-fit: contain;
+            border-radius: 50%;
+            border: 1px solid var(--border-color);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .logo-img:hover {
+            transform: rotate(360deg) scale(1.05);
+        }
+
+        .logo-text h1 {
+            font-size: 0.95rem;
+            color: var(--primary);
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            text-transform: uppercase;
+        }
+
+        .logo-text p {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        /* Minimal Navigation Links */
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 32px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 400;
+            letter-spacing: 0.02em;
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background-color: var(--primary);
+            transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .nav-links a:hover::after, .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .menu-toggle {
+            display: none;
+            cursor: pointer;
+            font-size: 1.25rem;
+            color: var(--primary);
+            background: none;
+            border: none;
+            transition: transform 0.3s ease;
+        }
+
+        .menu-toggle:active {
+            transform: scale(0.9);
+        }
+
+        /* Backdrop Overlay for Sidebar */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(4px);
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            z-index: 998;
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Page View Architecture */
+        .page-view {
+            display: none;
+            padding-top: 140px;
+            min-height: calc(100vh - 100px);
+            opacity: 0;
+            transform: translateY(15px);
+            transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .page-view.active-page {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Minimal Hero Section */
+        .hero {
+            text-align: center;
+            padding: 100px 20px 80px;
+            max-width: 800px;
+            margin: 0 auto;
+            animation: heroFloat 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        @keyframes heroFloat {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero bismillah {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-style: italic;
+            letter-spacing: 0.05em;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .hero h2 {
+            font-size: 2.8rem;
+            color: var(--primary);
+            font-weight: 400;
+            letter-spacing: -0.03em;
+            margin-bottom: 12px;
+            line-height: 1.2;
+        }
+
+        .hero h3 {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            font-weight: 400;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+        }
+
+        .hero p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: justify;
+            text-justify: inter-word;
+        }
+
+        .btn {
+            display: inline-block;
+            background: var(--primary);
+            color: var(--surface-color);
+            padding: 12px 28px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 400;
+            letter-spacing: 0.03em;
+            transition: var(--transition);
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        }
+
+        /* Container & Minimal Section Headings with Watermark */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 40px 80px;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+            padding: 20px 0;
+            animation: fadeInSeq 0.6s ease both;
+        }
+
+        @keyframes fadeInSeq {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 180px;
+            height: 180px;
+            background: url('smch-logo.jpg') no-repeat center center;
+            background-size: contain;
+            opacity: 0.04;
+            z-index: 0;
+            pointer-events: none;
+            animation: pulseWatermark 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulseWatermark {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 0.03; }
+            100% { transform: translate(-50%, -50%) scale(1.05); opacity: 0.06; }
+        }
+
+        .section-title h2,
+        .section-title p {
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-title h2 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            font-weight: 400;
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
+        }
+
+        .section-title p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            letter-spacing: 0.02em;
+        }
+
+        /* Clean Architectural Grid System (3 columns on desktop, 2 columns on mobile) */
+        .uniform-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 60px;
+        }
+
+        .member-card {
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 24px;
+            text-align: center;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            animation: cardAppear 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+            min-height: 110px;
+        }
+
+        @keyframes cardAppear {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .member-card:hover {
+            border-color: #b5b5b5;
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.03);
+        }
+
+        .member-info {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .role-text {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 500;
+        }
+
+        .member-name {
+            font-size: 0.95rem;
+            color: var(--primary);
+            font-weight: 500;
+            letter-spacing: -0.01em;
+        }
+
+        /* Minimal Content Cards */
+        .content-card {
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 50px;
+            margin-bottom: 30px;
+            transition: var(--transition);
+            animation: cardAppear 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .content-card:hover {
+            border-color: #cccccc;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.02);
+        }
+
+        .content-card h3 {
+            color: var(--primary);
+            font-size: 1.3rem;
+            font-weight: 400;
+            letter-spacing: -0.01em;
+            margin-bottom: 20px;
+        }
+
+        .content-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 16px;
+            text-align: justify;
+            text-justify: inter-word;
+        }
+
+        /* Application Button Container */
+        .apply-btn-wrapper {
+            margin: 25px 0 10px;
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        .apply-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--primary);
+            color: var(--surface-color);
+            padding: 14px 28px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            cursor: pointer;
+            border: none;
+            transition: var(--transition);
+        }
+
+        .apply-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+            background: #222222;
+        }
+
+        /* Minimalist Progress & Financial Bars */
+        .fund-progress-container {
+            margin-top: 35px;
+            padding-top: 25px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .fund-block {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .fund-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .fund-stats .raised {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary);
+            letter-spacing: -0.02em;
+        }
+
+        .fund-stats .raised span {
+            font-size: 0.75rem;
+            font-weight: 400;
+            color: var(--text-muted);
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .fund-stats .target {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-align: right;
+            font-weight: 400;
+        }
+
+        .fund-stats .target strong {
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 8px;
+            background-color: #f0f0f0;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background-color: var(--primary);
+            border-radius: 20px;
+            transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .progress-bar-fill.expenditure-fill {
+            background-color: #555555;
+        }
+
+        /* Minimal Dropdown for Expenditure Details */
+        .expenditure-dropdown-details {
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            overflow: hidden;
+            background: #fafafa;
+            margin-top: 10px;
+            transition: var(--transition);
+        }
+
+        .expenditure-dropdown-details summary {
+            padding: 14px 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--primary);
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+            transition: background-color 0.2s ease;
+        }
+
+        .expenditure-dropdown-details summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .expenditure-dropdown-details summary:hover {
+            background-color: #f2f2f2;
+        }
+
+        .expenditure-dropdown-details summary i {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            transition: transform 0.3s ease;
+        }
+
+        .expenditure-dropdown-details[open] summary i {
+            transform: rotate(180deg);
+        }
+
+        .cost-breakdown-list {
+            padding: 15px 20px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: var(--surface-color);
+        }
+
+        .cost-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+        }
+
+        .cost-item .cost-label {
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cost-item .cost-label i {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            width: 16px;
+            text-align: center;
+        }
+
+        .cost-item .cost-val {
+            font-weight: 500;
+            color: var(--primary);
+        }
+
+        /* Location Map Container */
+        .map-container {
+            margin-top: 35px;
+            padding-top: 25px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .map-container h4 {
+            font-size: 1.05rem;
+            font-weight: 500;
+            color: var(--primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .map-container h4 i {
+            color: var(--text-muted);
+        }
+
+        .map-address-sub {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 18px;
+        }
+
+        .map-wrapper {
+            width: 100%;
+            height: 400px;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            background: #f7f7f7;
+        }
+
+        .map-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        .map-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .map-link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .map-link-btn:hover {
+            color: var(--text-muted);
+            transform: translateX(3px);
+        }
+
+        /* Modal / Hover Form Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(6px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.35s ease, visibility 0.35s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-card {
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            width: 100%;
+            max-width: 580px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 36px 32px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+            transform: translateY(20px) scale(0.98);
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+        }
+
+        .modal-overlay.active .modal-card {
+            transform: translateY(0) scale(1);
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 16px;
+        }
+
+        .modal-header h3 {
+            font-size: 1.15rem;
+            color: var(--primary);
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            line-height: 1.35;
+        }
+
+        .modal-header p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-top: 4px;
+        }
+
+        .modal-close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: var(--transition);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close-btn:hover {
+            color: var(--primary);
+            background: #f0f0f0;
+        }
+
+        .funding-form {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+        }
+
+        .form-group label {
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: var(--text-main);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 0.88rem;
+            color: var(--text-main);
+            background-color: #fafafa;
+            transition: var(--transition);
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            background-color: var(--surface-color);
+            box-shadow: 0 0 0 2px rgba(17,17,17,0.05);
+        }
+
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22293.4%22%20height%3D%22293.4%22%3E%3Cpath%20fill%3D%22%23666666%22%20d%3D%22M236.4%20129.3L146.7%20219%2057%20129.3b0%200%200%200%200%200l17.7-17.7c4.7-4.7%2012.3-4.7%2017%200l55%2055%2055-55c4.7-4.7%2012.3-4.7%2017%200l17.7%2017.7c4.7%204.7%204.7%2012.3%200%2017z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            background-size: 10px;
+            padding-right: 32px;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 70px;
+        }
+
+        .submit-form-btn {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            background: var(--primary);
+            color: var(--surface-color);
+            border: none;
+            border-radius: 4px;
+            font-size: 0.88rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .submit-form-btn:hover {
+            background: #222222;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        }
+
+        /* Minimal Footer */
+        footer {
+            border-top: 1px solid var(--border-color);
+            background: var(--surface-color);
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 60px;
+        }
+
+        footer p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            letter-spacing: 0.03em;
+        }
+
+        /* Responsive Architecture */
+        @media (max-width: 850px) {
+            .menu-toggle {
+                display: block;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -280px;
+                width: 280px;
+                height: 100vh;
+                background: var(--surface-color);
+                flex-direction: column;
+                gap: 0;
+                border-left: 1px solid var(--border-color);
+                transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+                z-index: 1001;
+                padding-top: 90px;
+            }
+
+            .nav-links.active {
+                right: 0;
+            }
+
+            .nav-links li {
+                width: 100%;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .nav-links a {
+                display: block;
+                padding: 16px 32px;
+                font-size: 0.9rem;
+            }
+
+            .navbar {
+                padding: 16px 20px;
+            }
+
+            .hero h2 {
+                font-size: 2.1rem;
+            }
+
+            .content-card {
+                padding: 30px 24px;
+            }
+
+            .map-wrapper {
+                height: 300px;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 18px;
+            }
+
+            .modal-card {
+                padding: 28px 20px;
+            }
+
+            /* 2 columns on mobile view */
+            .uniform-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Minimal Header -->
+    <header>
+        <div class="navbar">
+            <div class="logo-area">
+                <img src="ida-logo.jpg" alt="IDA Logo" class="logo-img">
+                <div class="logo-text">
+                    <h1>Intern Doctor's Association</h1>
+                    <p>SMCH 2026–2027</p>
+                </div>
+            </div>
+            
+            <ul class="nav-links" id="navLinks">
+                <li><a onclick="switchPage('home')" class="nav-item active" data-target="home">Home</a></li>
+                <li><a onclick="switchPage('committee')" class="nav-item" data-target="committee">Executive Committee</a></li>
+                <li><a onclick="switchPage('poorfund')" class="nav-item" data-target="poorfund">Poor Fund Initiative</a></li>
+                <li><a onclick="switchPage('about')" class="nav-item" data-target="about">About Us</a></li>
+            </ul>
+
+            <button class="menu-toggle" id="mobileMenu" aria-label="Toggle navigation menu">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- PAGE 1: HOME -->
+    <div id="home" class="page-view active-page">
+        <section class="hero">
+            <bismillah>" বিসমিল্লাহির রহমানির রহিম "</bismillah>
+            <h2>Intern Doctors Association</h2>
+            <h3>Southern Medical College & Hospital</h3>
+            <p>Official Committee for the term 2026-2027. Dedicated to professional integrity, clinical excellence, and patient welfare.</p>
+            <a onclick="switchPage('committee')" class="btn">Explore Executive Committee</a>
+        </section>
+        <div class="container">
+            <div class="section-title">
+                <h2>Overview</h2>
+                <p>Establishing standards of practice and community welfare</p>
+            </div>
+            <div class="content-card">
+                <h3>Our Core Mission</h3>
+                <p>The Intern Doctors Association (IDA) of Southern Medical College & Hospital (SMCH) operates as the primary representative framework for intern physicians. We focus on streamlining hospital integration, safeguarding professional interests, and driving essential medical support initiatives.</p>
+                <p>Navigate through our structural divisions above to discover our committee members, secretarial departments, and welfare funds.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 2: COMMITTEE -->
+    <div id="committee" class="page-view">
+        <div class="container">
+            <div class="section-title">
+                <h2>Executive Committee</h2>
+                <p>Official Executive Committee — Session 2026–2027</p>
+            </div>
+            <div class="uniform-grid">
+                <div class="member-card">
+                    <div class="member-info">
+                        <div class="role-text">President</div>
+                        <div class="member-name">Dr. SHM Omar Faruque</div>
+                    </div>
+                </div>
+                <div class="member-card">
+                    <div class="member-info">
+                        <div class="role-text">Senior Vice-President</div>
+                        <div class="member-name">Dr. Md. Abu Faisal</div>
+                    </div>
+                </div>
+                <div class="member-card">
+                    <div class="member-info">
+                        <div class="role-text">General Secretary</div>
+                        <div class="member-name">Dr. Mohammed Taushifun Nabi Tareq</div>
+                    </div>
+                </div>
+                <div class="member-card">
+                    <div class="member-info">
+                        <div class="role-text">Vice-President</div>
+                        <div class="member-name">Dr. Miskatul Islam</div>
+                    </div>
+                </div>
+                <div class="member-card">
+                    <div class="member-info">
+                        <div class="role-text">Vice-President</div>
+                        <div class="member-name">Dr. Maimuna Mustari Meem</div>
+                    </div>
+                </div>
+                <div class="member-card">
+                    <div class="member-info">
+                        <div class="role-text">Vice-President</div>
+                        <div class="member-name">Dr. Sayeda Mahmuda Azam</div>
+                    </div>
+                </div>
+                <div class="member-card">
+                    <div class="member-info">
+                        <div class="role-text">Assistant General Secretary</div>
+                        <div class="member-name">Dr. Samiha Salim</div>
+                    </div>
+                </div>
+                <div class="member-card">
+                    <div class="member-info">
+                        <div class="role-text">Treasurer & Sports Secretary</div>
+                        <div class="member-name">Dr. S. M. Mustaqim Billah</div>
+                    </div>
+                </div>
+                <div class="member-card">
+                    <div class="member-info">
+                        <div class="role-text">Office Secretary</div>
+                        <div class="member-name">Dr. Farzana Haque</div>
+                    </div>
+                </div>
+                <div class="member-card">
+                    <div class="member-info">
+                        <div class="role-text">Organizing Secretary</div>
+                        <div class="member-name">Dr. Nabiha Tahsin Arufa</div>
+                    </div>
+                </div>
+                <div class="member-card">
+                    <div class="member-info">
+                        <div class="role-text">Education & Research Secretary</div>
+                        <div class="member-name">Dr. Israt Jahan</div>
+                    </div>
+                </div>
+                <div class="member-card">
+                    <div class="member-info">
+                        <div class="role-text">Health Secretary</div>
+                        <div class="member-name">Dr. Ispita Meharin</div>
+                    </div>
+                </div>
+                <div class="member-card">
+                    <div class="member-info">
+                        <div class="role-text">Cultural Secretary</div>
+                        <div class="member-name">Dr. Siratun Tanjila Kumkum</div>
+                    </div>
+                </div>
+                <div class="member-card">
+                    <div class="member-info">
+                        <div class="role-text">Library Secretary</div>
+                        <div class="member-name">Dr. Nowshin Layla Mumu</div>
+                    </div>
+                </div>
+                <div class="member-card">
+                    <div class="member-info">
+                        <div class="role-text">Information & Technology Secretary</div>
+                        <div class="member-name">Dr. Samiha Binte Azad</div>
+                    </div>
+                </div>
+                <div class="member-card">
+                    <div class="member-info">
+                        <div class="role-text">Students Welfare Secretary</div>
+                        <div class="member-name">Dr. Tayubatun Nur Ruhi</div>
+                    </div>
+                </div>
+                <div class="member-card">
+                    <div class="member-info">
+                        <div class="role-text">Patients Welfare Secretary</div>
+                        <div class="member-name">Dr. Aka Devi</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 3: POOR FUND -->
+    <div id="poorfund" class="page-view">
+        <div class="container">
+            <div class="section-title">
+                <h2>Poor Fund Initiative</h2>
+                <p>This initiative is funded by the members of Southern Medical College & Hospital.</p>
+            </div>
+            <div class="content-card">
+                <h3>Committed to Compassionate Care</h3>
+                <p>Managed in close coordination with our Patients Welfare Secretary (Dr. Aka Devi) and Vice-president (Dr. Miskatul Islam), the IDA Poor Fund delivers critical financial backing for essential diagnostics and medications for distressed patients at Southern Medical College & Hospital.</p>
+                <p>We maintain that economic vulnerability should never serve as an obstacle to receiving essential healthcare services.</p>
+
+                <!-- Apply for Funding Action Button -->
+                <div class="apply-btn-wrapper">
+                    <button class="apply-btn" onclick="openFundingModal()">
+                        <i class="fas fa-hand-holding-medical"></i> Apply for Funding for a Patient
+                    </button>
+                </div>
+
+                <!-- Financial Tracking Bars (Maintained dynamically by JS values below) -->
+                <div class="fund-progress-container">
+                    
+                    <!-- Dynamic Total Collection Bar -->
+                    <div class="fund-block">
+                        <div class="fund-stats">
+                            <div class="raised">
+                                <span>Total Collection</span>
+                                <strong id="totalCollectionText">0 BDT</strong>
+                            </div>
+                            <div class="target">
+                                Status: <strong>Active Collection</strong>
+                            </div>
+                        </div>
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" id="collectionBarFill" style="width: 0%;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Total Expenditure Bar -->
+                    <div class="fund-block">
+                        <div class="fund-stats">
+                            <div class="raised">
+                                <span>Total Expenditure</span>
+                                <strong id="totalExpenditureText">0 BDT</strong>
+                            </div>
+                            <div class="target">
+                                Utilization: <strong id="expenditurePercentText">0%</strong>
+                            </div>
+                        </div>
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill expenditure-fill" id="expenditureBarFill" style="width: 0%;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Expenditure Breakdown Dropdown -->
+                    <details class="expenditure-dropdown-details">
+                        <summary>
+                            <span><i class="fas fa-list-ul" style="margin-right: 8px;"></i> Expenditure Breakdown</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </summary>
+                        <div class="cost-breakdown-list">
+                            <div class="cost-item">
+                                <span class="cost-label"><i class="fas fa-pills"></i> Medicine</span>
+                                <span class="cost-val" id="medicineCostText">0 BDT</span>
+                            </div>
+                            <div class="cost-item">
+                                <span class="cost-label"><i class="fas fa-microscope"></i> Lab Tests, Radiology & Imaging</span>
+                                <span class="cost-val" id="labCostText">0 BDT</span>
+                            </div>
+                            <div class="cost-item">
+                                <span class="cost-label"><i class="fas fa-file-invoice-dollar"></i> Hospital Bills</span>
+                                <span class="cost-val" id="billsCostText">0 BDT</span>
+                            </div>
+                        </div>
+                    </details>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 4: ABOUT US -->
+    <div id="about" class="page-view">
+        <div class="container">
+            <div class="section-title">
+                <h2>About Us</h2>
+                <p>Intern Doctors Association (IDA) — Southern Medical College & Hospital</p>
+            </div>
+            <div class="content-card">
+                <h3>Session 2026–2027 Committee</h3>
+                <p>The Intern Doctors Association (IDA) functions as a collective platform representing the medical intern cohort at Southern Medical College & Hospital. Guided by professional ethics, mutual cooperation, and social accountability, our committee oversees developmental, cultural, and patient-centric operations.</p>
+                <p><strong>Institution:</strong> Southern Medical College & Hospital (SMCH)</p>
+                <p><strong>Session:</strong> 2026–2027</p>
+
+                <!-- Precise Location Map Embed for Southern Medical College & Hospital -->
+                <div class="map-container">
+                    <h4><i class="fas fa-map-marker-alt"></i> Precise Hospital Location</h4>
+                    <p class="map-address-sub">Southern Medical College Road, East Nasirabad, Khulshi, Chattogram 4209, Bangladesh</p>
+                    <div class="map-wrapper">
+                        <iframe 
+                            src="https://maps.google.com/maps?q=Southern%20Medical%20College%20and%20Hospital%20East%20Nasirabad%20Chattogram&t=&z=16&ie=UTF8&iwloc=&output=embed" 
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+                    <div class="map-actions">
+                        <a href="https://maps.app.goo.gl/NzvxwBumrLkWVCgB8" target="_blank" rel="noopener noreferrer" class="map-link-btn">
+                            Open in Google Maps Application <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <a href="https://www.google.com/maps/dir/?api=1&destination=Southern+Medical+College+and+Hospital+Chattogram" target="_blank" rel="noopener noreferrer" class="map-link-btn">
+                            Get Directions <i class="fas fa-directions"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HOVER REGISTRATION MODAL FORM -->
+    <div class="modal-overlay" id="fundingModalOverlay">
+        <div class="modal-card">
+            <button class="modal-close-btn" onclick="closeFundingModal()" aria-label="Close modal">&times;</button>
+            <div class="modal-header">
+                <h3>Poor Fund Initiative</h3>
+                <p>Intern Doctors Association 26–27</p>
+            </div>
+            <form class="funding-form" onsubmit="handleFundingSubmit(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="ptName">Pt Name</label>
+                        <input type="text" id="ptName" class="form-control" placeholder="Patient's Full Name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regNo">Reg No</label>
+                        <input type="text" id="regNo" class="form-control" placeholder="Hospital Reg Number" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="ptAge">Age</label>
+                        <input type="number" id="ptAge" class="form-control" placeholder="Years" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="ptSex">Sex</label>
+                        <select id="ptSex" class="form-control" required>
+                            <option value="" disabled selected>Select Sex</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="deptName">Dept Name</label>
+                    <select id="deptName" class="form-control" required>
+                        <option value="" disabled selected>Select Department</option>
+                        <option value="Department of Medicine & Allied">Department of Medicine & Allied</option>
+                        <option value="Department of Obstetrics and Gynaecology">Department of Obstetrics and Gynaecology</option>
+                        <option value="Department of Paediatrics">Department of Paediatrics</option>
+                        <option value="Department of Surgery">Department of Surgery</option>
+                        <option value="Department of Otolaryngology">Department of Otolaryngology</option>
+                        <option value="Department of Orthopedics">Department of Orthopedics</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fundAmount">Fund Amount (BDT)</label>
+                        <input type="number" id="fundAmount" class="form-control" placeholder="Amount in BDT" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="requestedFor">Requested For</label>
+                        <select id="requestedFor" class="form-control" required>
+                            <option value="" disabled selected>Select Category</option>
+                            <option value="Medicine">Medicine</option>
+                            <option value="Lab">Labs</option>
+                            <option value="Hospital Bills">Hospital Bills</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="requestDetails">Details (Name of medicine / Labs / Type of bill)</label>
+                    <textarea id="requestDetails" class="form-control" placeholder="Specify items (e.g. Tab. X, CBC, Ward Admission Fee)" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="internIdNo">Intern ID No</label>
+                    <input type="number" id="internIdNo" class="form-control" placeholder="e.g. 1" min="1" required>
+                </div>
+
+                <button type="submit" class="submit-form-btn">Submit & Download Official A4 Form (PDF)</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Minimal Footer -->
+    <footer>
+        <p>&copy; IDA 2026–2027 | SMCH</p>
+    </footer>
+
+    <!-- Animated Sidebar, Router, Fund Data, Modal & PDF Generation Script -->
+    <script>
+        // ==========================================
+        // FINANCIAL FUND DATA MANAGEMENT (UPDATE HERE)
+        // ==========================================
+        const collectionAmount = 0; // Total funds collected (in BDT)
+        
+        // Itemized Expenditures (in BDT)
+        const medicineCost = 0;
+        const labCost = 0;
+        const billsCost = 0;
+
+        // Dynamic Intern Directory mapped sequentially by ID No across Groups A to F
+        const internDirectory = {
+            // Group A (1 - 5)
+            1: "Dr. Miskatul Islam",
+            2: "Dr. Tayubatun Nur Ruhi",
+            3: "Dr. Samiha Binte Azad",
+            4: "Dr. Roshni Akter",
+            5: "Dr. Nowshin Layla Mumu",
+            // Group B (6 - 10)
+            6: "Dr. S. M. Mustaqim Billah",
+            7: "Dr. Sidratul Montaha",
+            8: "Dr. Siratun Tanjila Kumkum",
+            9: "Dr. Nabiha Tahsin Arufa",
+            10: "Dr. Sayeda Mahmuda Azam Meem",
+            // Group C (11 - 16)
+            11: "Dr. Aysha Akter",
+            12: "Dr. Shadia Nowrin Jui",
+            13: "Dr. Jaheda Alam Jamy",
+            14: "Dr. Romana Siddika Tanima",
+            15: "Dr. Fahim Muntasir",
+            16: "Dr. Mossa. Taslima Sultana Meem",
+            // Group D (17 - 23)
+            17: "Dr. SHM Omar Faruque",
+            18: "Dr. Ispita Meharin",
+            19: "Dr. Md. Abu Faisal",
+            20: "Dr. Samiha Salim",
+            21: "Dr. Israt Jahan",
+            22: "Dr. Farzana Haque",
+            23: "Dr. Maimuna Mustari Meem",
+            // Group E (24 - 28)
+            24: "Dr. Taslima Akhter",
+            25: "Dr. Rubayet Ullah Sajid",
+            26: "Dr. Jannatul Mawya Nizhu",
+            27: "Dr. Tausif Un Nabi Tareq",
+            28: "Dr. Rehan Alam",
+            // Group F (29 - 33)
+            29: "Dr. Shafinaz Mehzabin Lisha",
+            30: "Dr. Nusrat Moktary Jasy",
+            31: "Dr. Shoyeb Islam",
+            32: "Dr. Aka Devi",
+            33: "Dr. Adiba Adneen"
+        };
+
+        function updateFundDisplay() {
+            // Calculate total expenditure from breakdown costs
+            const totalExpenditure = medicineCost + labCost + billsCost;
+
+            // Calculate percentage used (relative to total collection)
+            let expPercentage = 0;
+            if (collectionAmount > 0) {
+                expPercentage = Math.min(100, Math.round((totalExpenditure / collectionAmount) * 100));
+            }
+
+            // Collection Bar Fill (100% full when collection > 0)
+            const collectionBarWidth = collectionAmount > 0 ? 100 : 0;
+
+            // DOM Updates
+            document.getElementById('totalCollectionText').innerText = `${collectionAmount.toLocaleString()} BDT`;
+            document.getElementById('totalExpenditureText').innerText = `${totalExpenditure.toLocaleString()} BDT`;
+            document.getElementById('expenditurePercentText').innerText = `${expPercentage}%`;
+
+            document.getElementById('collectionBarFill').style.width = `${collectionBarWidth}%`;
+            document.getElementById('expenditureBarFill').style.width = `${expPercentage}%`;
+
+            document.getElementById('medicineCostText').innerText = `${medicineCost.toLocaleString()} BDT`;
+            document.getElementById('labCostText').innerText = `${labCost.toLocaleString()} BDT`;
+            document.getElementById('billsCostText').innerText = `${billsCost.toLocaleString()} BDT`;
+        }
+
+        // Initialize fund numbers on page load
+        document.addEventListener('DOMContentLoaded', updateFundDisplay);
+
+        // ==========================================
+        // HOVER REGISTRATION MODAL LOGIC
+        // ==========================================
+        const fundingModalOverlay = document.getElementById('fundingModalOverlay');
+
+        function openFundingModal() {
+            fundingModalOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeFundingModal() {
+            fundingModalOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Close modal when clicking outside card
+        fundingModalOverlay.addEventListener('click', function(e) {
+            if (e.target === fundingModalOverlay) {
+                closeFundingModal();
+            }
+        });
+
+        // ==========================================
+        // AUTOMATIC A4 PDF GENERATION FUNCTION
+        // ==========================================
+        function handleFundingSubmit(event) {
+            event.preventDefault();
+
+            // Extract values from form
+            const ptName = document.getElementById('ptName').value.trim();
+            const regNo = document.getElementById('regNo').value.trim();
+            const ptAge = document.getElementById('ptAge').value.trim();
+            const ptSex = document.getElementById('ptSex').value;
+            const deptName = document.getElementById('deptName').value;
+            const fundAmount = document.getElementById('fundAmount').value.trim();
+            const requestedFor = document.getElementById('requestedFor').value;
+            const requestDetails = document.getElementById('requestDetails').value.trim();
+            const internIdNo = document.getElementById('internIdNo').value.trim();
+
+            // Look up Intern Name by ID
+            const mappedInternName = internDirectory[internIdNo] || `Dr. Intern (ID: ${internIdNo})`;
+            const internDisplayStr = `${mappedInternName} (ID: ${internIdNo})`;
+
+            const dateStr = new Date().toLocaleDateString('en-GB', {
+                day: '2-digit', month: 'short', year: 'numeric'
+            });
+            const refNo = 'IDA-PF-' + Math.floor(100000 + Math.random() * 900000);
+
+            // Initialize jsPDF document (A4 portrait: 210mm x 297mm)
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({
+                orientation: 'p',
+                unit: 'mm',
+                format: 'a4'
+            });
+
+            // Set Title Header Box & Styling
+            doc.setDrawColor(200, 200, 200);
+            doc.setFillColor(250, 250, 250);
+            doc.rect(15, 12, 180, 32, 'FD');
+
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(14);
+            doc.setTextColor(17, 17, 17);
+            doc.text("INTERN DOCTORS ASSOCIATION (IDA)", 105, 20, { align: "center" });
+
+            doc.setFontSize(11);
+            doc.setFont("helvetica", "normal");
+            doc.setTextColor(80, 80, 80);
+            doc.text("Southern Medical College & Hospital (SMCH)", 105, 26, { align: "center" });
+
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.text("POOR FUND INITIATIVE — SESSION 2026–2027", 105, 33, { align: "center" });
+
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(9);
+            doc.setTextColor(100, 100, 100);
+            doc.text(`Ref No: ${refNo}`, 18, 50);
+            doc.text(`Date: ${dateStr}`, 192, 50, { align: "right" });
+
+            doc.setLineWidth(0.4);
+            doc.setDrawColor(0, 0, 0);
+            doc.line(15, 53, 195, 53);
+
+            // Section Header: Patient & Request Details
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(11);
+            doc.setTextColor(17, 17, 17);
+            doc.text("POOR FUND REQUISITION DETAILS", 15, 62);
+
+            // Table Grid Setup
+            const startY = 66;
+            const rowH = 11;
+            const col1 = 15;
+            const col2 = 65;
+            const col3 = 110;
+            const col4 = 155;
+            const tableWidth = 180;
+
+            doc.setDrawColor(220, 220, 220);
+            doc.setFontSize(9.5);
+
+            // Row 1: Patient Name & Reg No
+            doc.rect(col1, startY, tableWidth, rowH);
+            doc.line(col3, startY, col3, startY + rowH);
+            
+            doc.setFont("helvetica", "bold");
+            doc.text("Patient Name:", col1 + 3, startY + 7);
+            doc.setFont("helvetica", "normal");
+            doc.text(ptName, col2 - 15, startY + 7);
+
+            doc.setFont("helvetica", "bold");
+            doc.text("Reg No:", col3 + 3, startY + 7);
+            doc.setFont("helvetica", "normal");
+            doc.text(regNo, col4 - 10, startY + 7);
+
+            // Row 2: Age, Sex & Department
+            const r2Y = startY + rowH;
+            doc.rect(col1, r2Y, tableWidth, rowH);
+            doc.line(col3, r2Y, col3, r2Y + rowH);
+
+            doc.setFont("helvetica", "bold");
+            doc.text("Age / Sex:", col1 + 3, r2Y + 7);
+            doc.setFont("helvetica", "normal");
+            doc.text(`${ptAge} Yrs / ${ptSex}`, col2 - 15, r2Y + 7);
+
+            doc.setFont("helvetica", "bold");
+            doc.text("Department:", col3 + 3, r2Y + 7);
+            doc.setFont("helvetica", "normal");
+            doc.text(deptName, col4 - 10, r2Y + 7);
+
+            // Row 3: Fund Amount & Requested For
+            const r3Y = r2Y + rowH;
+            doc.rect(col1, r3Y, tableWidth, rowH);
+            doc.line(col3, r3Y, col3, r3Y + rowH);
+
+            doc.setFont("helvetica", "bold");
+            doc.text("Fund Amount:", col1 + 3, r3Y + 7);
+            doc.setFont("helvetica", "bold");
+            doc.setTextColor(0, 0, 0);
+            doc.text(`${Number(fundAmount).toLocaleString()} BDT`, col2 - 15, r3Y + 7);
+
+            doc.setTextColor(17, 17, 17);
+            doc.setFont("helvetica", "bold");
+            doc.text("Requested For:", col3 + 3, r3Y + 7);
+            doc.setFont("helvetica", "normal");
+            doc.text(requestedFor, col4 - 10, r3Y + 7);
+
+            // Row 4: Requisition Details Box
+            const r4Y = r3Y + rowH;
+            const detRowH = 16;
+            doc.rect(col1, r4Y, tableWidth, detRowH);
+            doc.setFont("helvetica", "bold");
+            doc.text("Item Details:", col1 + 3, r4Y + 6);
+            doc.setFont("helvetica", "normal");
+            
+            // Wrap text for details inside table
+            const splitDetails = doc.splitTextToSize(requestDetails, 130);
+            doc.text(splitDetails, col2 - 15, r4Y + 6);
+
+            // Row 5: Recommending Intern
+            const r5Y = r4Y + detRowH;
+            doc.rect(col1, r5Y, tableWidth, rowH);
+            doc.setFont("helvetica", "bold");
+            doc.text("Recommending Intern:", col1 + 3, r5Y + 7);
+            doc.setFont("helvetica", "normal");
+            doc.text(internDisplayStr, col2 + 5, r5Y + 7);
+
+            // Approval Undertaking Box
+            const noteY = r5Y + rowH + 8;
+            doc.setFillColor(248, 248, 248);
+            doc.rect(15, noteY, 180, 22, 'F');
+            doc.setDrawColor(220, 220, 220);
+            doc.rect(15, noteY, 180, 22, 'D');
+
+            doc.setFont("helvetica", "italic");
+            doc.setFontSize(8.5);
+            doc.setTextColor(80, 80, 80);
+            doc.text("Verification & Approval Undertaking:", 18, noteY + 6);
+            doc.text("I hereby confirm that the above-mentioned patient is in genuine financial distress and requires immediate funding", 18, noteY + 11);
+            doc.text("support. The requested sum will be spent strictly for specified clinical investigations, medicine, or hospital fees.", 18, noteY + 16);
+
+            // ==========================================
+            // AUTHORIZATION SIGNATURE SLOTS (POSITIONED AT BOTTOM OF A4 PAGE)
+            // ==========================================
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(10.5);
+            doc.setTextColor(17, 17, 17);
+            doc.text("AUTHORIZATION & SIGNATURE", 15, 212);
+
+            doc.setDrawColor(120, 120, 120);
+            doc.setLineWidth(0.3);
+
+            // Row 1 Signatures: Recommending Intern & Dept Convenor
+            const sigY1 = 236;
+
+            // 1. Recommending Intern Slot
+            doc.line(18, sigY1, 88, sigY1);
+            doc.setFontSize(8.5);
+            doc.setFont("helvetica", "bold");
+            doc.text("Recommending Intern", 53, sigY1 + 5, { align: "center" });
+            doc.setFont("helvetica", "normal");
+            doc.text(internDisplayStr, 53, sigY1 + 9, { align: "center" });
+
+            // 2. Department Convenor Slot
+            doc.line(122, sigY1, 192, sigY1);
+            doc.setFont("helvetica", "bold");
+            doc.text("Department Convenor ", 157, sigY1 + 5, { align: "center" });
+            doc.setFont("helvetica", "normal");
+            doc.text("Signature & Seal", 157, sigY1 + 9, { align: "center" });
+
+            // Row 2 Signatures: VP, Patient Welfare Secretary & Treasurer
+            const sigY2 = 268;
+
+            // 3. Vice-President
+            doc.line(18, sigY2, 68, sigY2);
+            doc.setFont("helvetica", "bold");
+            doc.text("Vice-President (VP)", 43, sigY2 + 5, { align: "center" });
+            doc.setFont("helvetica", "normal");
+            doc.text("Dr. Miskatul Islam ", 43, sigY2 + 9, { align: "center" });
+
+            // 4. Patient Welfare Secretary
+            doc.line(80, sigY2, 130, sigY2);
+            doc.setFont("helvetica", "bold");
+            doc.text("Patient Welfare Secretary", 105, sigY2 + 5, { align: "center" });
+            doc.setFont("helvetica", "normal");
+            doc.text("Dr. Aka Devi", 105, sigY2 + 9, { align: "center" });
+
+            // 5. Treasurer
+            doc.line(142, sigY2, 192, sigY2);
+            doc.setFont("helvetica", "bold");
+            doc.text("Treasurer", 167, sigY2 + 5, { align: "center" });
+            doc.setFont("helvetica", "normal");
+            doc.text("Dr. S. M. Mustaqim Billah", 167, sigY2 + 9, { align: "center" });
+
+            // Footer Stamp & Verification Note
+            doc.setDrawColor(220, 220, 220);
+            doc.line(15, 282, 195, 282);
+            doc.setFontSize(7.5);
+            doc.setFont("helvetica", "normal");
+            doc.setTextColor(120, 120, 120);
+            doc.text("Generated via IDA Poor Fund Web Portal | Southern Medical College & Hospital", 105, 287, { align: "center" });
+
+            // Auto-Download PDF Document
+            const cleanFilename = `IDA_PoorFund_Requisition_${regNo.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`;
+            doc.save(cleanFilename);
+
+            // Inform user and close modal
+            alert('Application submitted successfully! Your official A4 requisition PDF document has been generated.');
+            closeFundingModal();
+            event.target.reset();
+        }
+
+        // ==========================================
+        // NAVIGATION & SIDEBAR LOGIC
+        // ==========================================
+        const mobileMenu = document.getElementById('mobileMenu');
+        const navLinks = document.getElementById('navLinks');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const menuIcon = mobileMenu.querySelector('i');
+
+        function toggleSidebar() {
+            navLinks.classList.toggle('active');
+            sidebarOverlay.classList.toggle('active');
+            if(navLinks.classList.contains('active')){
+                menuIcon.classList.remove('fa-bars');
+                menuIcon.classList.add('fa-times');
+            } else {
+                menuIcon.classList.remove('fa-times');
+                menuIcon.classList.add('fa-bars');
+            }
+        }
+
+        mobileMenu.addEventListener('click', toggleSidebar);
+        sidebarOverlay.addEventListener('click', toggleSidebar);
+
+        function switchPage(pageId) {
+            document.querySelectorAll('.page-view').forEach(page => {
+                page.classList.remove('active-page');
+            });
+            const targetPage = document.getElementById(pageId);
+            targetPage.classList.add('active-page');
+
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+                if(item.getAttribute('data-target') === pageId) {
+                    item.classList.add('active');
+                }
+            });
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            if (navLinks.classList.contains('active')) {
+                toggleSidebar();
+            }
+        }
+    </script>
+</body>
+</html>
