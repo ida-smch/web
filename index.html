@@ -791,7 +791,7 @@
             doc.rect(15, currentY, 180, 20);
             doc.setFontSize(8);
             doc.setFont('helvetica', 'italic');
-            doc.text('Official Declaration: I hereby certify that the patient specified above is undergoing treatment at Southern Medical College & Hospital and lacks the financial capacity to bear immediate medical costs. The sanctioned funds will be disbursed solely for essential treatment.', 18, currentY + 6, { maxWidth: 174 });
+            doc.text('Official Declaration: I hereby certify that the patient specified above is undergoing treatment at Southern Medical College & Hospital and lacks the financial capacity to bear immediate medical costs. The sanctioned funds will be disbursed solely for ____________________________.', 18, currentY + 6, { maxWidth: 174 });
 
             // Official Signature Lines
             const sigY = currentY + 45;
@@ -808,9 +808,9 @@
             // Signature 2: Vice-President
             doc.line(80, sigY, 130, sigY);
             doc.setFont('helvetica', 'bold');
-            doc.text('Dr. Md. Abu Faisal / VP', 80, sigY + 5);
+            doc.text('Dr. Miskatul Islam / VP', 80, sigY + 5);
             doc.setFont('helvetica', 'normal');
-            doc.text('Vice-President, IDA SMCH', 80, sigY + 9);
+            doc.text('Poor Fund In-charge, IDA SMCH', 80, sigY + 9);
 
             // Signature 3: Patients Welfare Secretary
             doc.line(145, sigY, 192, sigY);
