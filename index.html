@@ -752,7 +752,7 @@
             doc.setFillColor(245, 245, 245);
             doc.rect(15, 50, 180, 7, 'F');
             doc.setFont('helvetica', 'bold');
-            doc.text('1. RECOMMENDING INTERN PHYSICIAN', 18, 55);
+            doc.text('1. RECOMMENDING INTERN', 18, 55);
 
             doc.setFont('helvetica', 'normal');
             doc.text(`Physician Name: ${doctorName}`, 18, 64);
@@ -791,7 +791,7 @@
             doc.rect(15, currentY, 180, 20);
             doc.setFontSize(8);
             doc.setFont('helvetica', 'italic');
-            doc.text('Official Declaration: I hereby certify that the patient specified above is undergoing treatment at Southern Medical College & Hospital and lacks the financial capacity to bear immediate medical costs. The sanctioned funds will be disbursed solely for ____________________________.', 18, currentY + 6, { maxWidth: 174 });
+            doc.text('Official Declaration: I hereby certify that the patient specified above is undergoing treatment at Southern Medical College & Hospital and lacks the financial capacity to bear immediate medical costs. The sanctioned funds will be disbursed solely for patients welfare', 18, currentY + 6, { maxWidth: 174 });
 
             // Official Signature Lines
             const sigY = currentY + 45;
@@ -801,9 +801,9 @@
             doc.line(18, sigY, 65, sigY);
             doc.setFont('helvetica', 'bold');
             doc.setFontSize(8.5);
-            doc.text('Recommending Intern', 18, sigY + 5);
+            doc.text(doctorName, 18, sigY + 5);
             doc.setFont('helvetica', 'normal');
-            doc.text(doctorName, 18, sigY + 9);
+            doc.text('Recommending Intern', 18, sigY + 9);
 
             // Signature 2: Vice-President
             doc.line(80, sigY, 130, sigY);
