@@ -723,7 +723,7 @@
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF('p', 'mm', 'a4');
 
-            const refNo = `IDA-SMCH-${Date.now().toString().slice(-6)}`;
+            const refNo = `IDA-SMCH-PF-${Date.now().toString().slice(-6)}`;
             const dateStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
 
             // Document Title Header
@@ -737,7 +737,7 @@
             
             doc.setFont('helvetica', 'bold');
             doc.setFontSize(10);
-            doc.text('OFFICIAL PATIENT POOR FUND REQUISITION FORM (SESSION 2026-2027)', 105, 34, { align: 'center' });
+            doc.text('POOR FUND REQUISITION FORM', 105, 34, { align: 'center' });
 
             doc.setLineWidth(0.4);
             doc.line(15, 38, 195, 38);
@@ -821,7 +821,7 @@
 
             // Footer Stamp
             doc.setFontSize(7.5);
-            doc.text('System Generated Official Document • Intern Doctors Association SMCH Chattogram (Session 2026-2027)', 105, 285, { align: 'center' });
+            doc.text('System Generated Document • Intern Doctors Association SMCH Chattogram (Session 2026-2027)', 105, 285, { align: 'center' });
 
             doc.save(`IDA_PoorFund_Requisition_${regNo.replace(/\s+/g, '_')}.pdf`);
 
