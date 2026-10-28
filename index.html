@@ -661,7 +661,7 @@
             const exp = financialData.expenditures;
             const totalExp = exp.medicine + exp.labTests + exp.hospitalBills;
             const remaining = collection - totalExp;
-            const utilization = Math.min(100, Math.round((totalExp / collection) * 100));
+            const utilization = collection > 0 ? Math.min(100, Math.round((totalExp / collection) * 100)) : 0;
 
             document.getElementById('totalCollectionText').textContent = `BDT ${collection.toLocaleString()}`;
             document.getElementById('totalExpenditureText').textContent = `BDT ${totalExp.toLocaleString()}`;
@@ -706,9 +706,9 @@
         }
 
         /* ==========================================================================
-           10. OFFICIAL A4 PDF GENERATION ENGINE (jsPDF)
+           10. REDESIGNED HIGH-END EDITORIAL A4 PDF GENERATION ENGINE (jsPDF)
            ========================================================================== */
-        function generatePDFRequisition(event) {
+        async function generatePDFRequisition(event) {
             event.preventDefault();
 
             const doctorName = document.getElementById('reqInternSelect').value;
@@ -723,107 +723,301 @@
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF('p', 'mm', 'a4');
 
+            // Dimensions: 210 x 297 mm
+            const margin = 18;
+            const pageWidth = 210;
+            const contentWidth = pageWidth - (margin * 2); // 174 mm
+            
+            // Ultra-Minimalist Color Palette
+            const cBlack = [17, 17, 17];       // #111111
+            const cDark = [40, 40, 40];        // #282828
+            const cMuted = [115, 115, 115];    // #737373
+            const cLightBorder = [229, 229, 229]; // #E5E5E5
+            const cBgLight = [250, 250, 250];  // #FAFAFA
+
             const refNo = `IDA-SMCH-PF-${Date.now().toString().slice(-6)}`;
             const dateStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
 
-            // Document Title Header
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(16);
-            doc.text('INTERN DOCTORS ASSOCIATION (IDA)', 105, 20, { align: 'center' });
+            // Helper to asynchronously load image for jsPDF
+            const loadImage = (src) => new Promise((resolve) => {
+                const img = new Image();
+                img.crossOrigin = 'Anonymous';
+                img.onload = () => resolve(img);
+                img.onerror = () => resolve(null);
+                img.src = src;
+            });
 
+            // Try loading ida-logo.png
+            const logoImg = await loadImage('ida-logo.png');
+
+            let topY = 16;
+
+            // -------------------------------------------------------------
+            // 1. MINIMALIST HEADER WITH IDA LOGO & TYPOGRAPHY
+            // -------------------------------------------------------------
+            if (logoImg) {
+                // Place loaded logo image (Square aspect 18x18mm)
+                doc.addImage(logoImg, 'PNG', margin, topY, 18, 18);
+            } else {
+                // Sleek Monogram Fallback box if image is not present
+                doc.setDrawColor(...cBlack);
+                doc.setLineWidth(0.3);
+                doc.rect(margin, topY, 18, 18);
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(10);
+                doc.setTextColor(...cBlack);
+                doc.text('IDA', margin + 9, topY + 11, { align: 'center' });
+            }
+
+            // Header Text Block
+            const textLeft = margin + 23;
+            doc.setFont('helvetica', 'bold');
             doc.setFontSize(11);
-            doc.setFont('helvetica', 'normal');
-            doc.text('Southern Medical College & Hospital (SMCH), Chattogram', 105, 27, { align: 'center' });
-            
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(10);
-            doc.text('POOR FUND REQUISITION FORM', 105, 34, { align: 'center' });
-
-            doc.setLineWidth(0.4);
-            doc.line(15, 38, 195, 38);
-
-            // Ref & Date Meta
-            doc.setFontSize(9);
-            doc.setFont('helvetica', 'bold');
-            doc.text(`Requisition Ref: ${refNo}`, 15, 45);
-            doc.text(`Issue Date: ${dateStr}`, 195, 45, { align: 'right' });
-
-            // 1. Recommending Doctor Header
-            doc.setFillColor(245, 245, 245);
-            doc.rect(15, 50, 180, 7, 'F');
-            doc.setFont('helvetica', 'bold');
-            doc.text('1. RECOMMENDING INTERN', 18, 55);
+            doc.setTextColor(...cBlack);
+            doc.text('INTERN DOCTORS ASSOCIATION', textLeft, topY + 5);
 
             doc.setFont('helvetica', 'normal');
-            doc.text(`Physician Name: ${doctorName}`, 18, 64);
-            doc.text(`Designation: Intern Doctor, SMCH`, 130, 64);
-
-            // 2. Patient Clinical Details Box
-            doc.rect(15, 71, 180, 7, 'F');
-            doc.setFont('helvetica', 'bold');
-            doc.text('2. PATIENT CLINICAL PARTICULARS', 18, 76);
-
-            doc.setFont('helvetica', 'normal');
-            doc.text(`Patient Full Name: ${patientName}`, 18, 85);
-            doc.text(`Hospital Reg No: ${regNo}`, 130, 85);
-            
-            doc.text(`Age & Sex: ${ageGender}`, 18, 93);
-            doc.text(`Department: ${department}`, 130, 93);
-
-            // 3. Financial Assistance Breakdown Box
-            doc.rect(15, 102, 180, 7, 'F');
-            doc.setFont('helvetica', 'bold');
-            doc.text('3. FINANCIAL AID REQUEST BREAKDOWN', 18, 107);
-
-            doc.setFont('helvetica', 'normal');
-            doc.text(`Assistance Category: ${category}`, 18, 116);
-            doc.setFont('helvetica', 'bold');
-            doc.text(`Approved Fund Amount: BDT ${Number(amount).toLocaleString()} /-`, 18, 124);
-
-            doc.setFont('helvetica', 'normal');
-            doc.text('Clinical Justification & Medical Necessity:', 18, 132);
-            
-            const splitPurpose = doc.splitTextToSize(purpose, 170);
-            doc.text(splitPurpose, 18, 139);
-
-            // Terms & Declaration Frame
-            const currentY = 145 + (splitPurpose.length * 5.5);
-            doc.rect(15, currentY, 180, 20);
             doc.setFontSize(8);
-            doc.setFont('helvetica', 'italic');
-            doc.text('Official Declaration: I hereby certify that the patient specified above is undergoing treatment at Southern Medical College & Hospital and lacks the financial capacity to bear immediate medical costs. The sanctioned funds will be disbursed solely for patients welfare', 18, currentY + 6, { maxWidth: 174 });
+            doc.setTextColor(...cMuted);
+            doc.text('Southern Medical College & Hospital • Session 2026–2027', textLeft, topY + 10.5);
 
-            // Official Signature Lines
-            const sigY = currentY + 45;
-            doc.setLineWidth(0.3);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(7.5);
+            doc.setTextColor(...cDark);
+            doc.text('PATIENT POOR FUND HUMANITARIAN REQUISITION', textLeft, topY + 16);
+
+            // Ref & Date Meta (Top Right Align)
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(7.5);
+            doc.setTextColor(...cBlack);
+            doc.text(refNo, margin + contentWidth, topY + 5, { align: 'right' });
             
-            // Signature 1: Recommending Intern
-            doc.line(18, sigY, 65, sigY);
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(7.5);
+            doc.setTextColor(...cMuted);
+            doc.text(`Date: ${dateStr}`, margin + contentWidth, topY + 10.5, { align: 'right' });
+
+            // Thin Horizontal Divider
+            let y = topY + 24;
+            doc.setDrawColor(...cBlack);
+            doc.setLineWidth(0.4);
+            doc.line(margin, y, margin + contentWidth, y);
+
+            // -------------------------------------------------------------
+            // 2. GRID SECTION 1: RECOMMENDING PHYSICIAN
+            // -------------------------------------------------------------
+            y += 8;
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(7);
+            doc.setTextColor(...cMuted);
+            doc.text('01 // RECOMMENDING PHYSICIAN', margin, y);
+
+            y += 4;
+            doc.setFillColor(...cBgLight);
+            doc.setDrawColor(...cLightBorder);
+            doc.setLineWidth(0.2);
+            doc.roundedRect(margin, y, contentWidth, 14, 1, 1, 'FD');
+
+            doc.setFontSize(7.5);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(...cMuted);
+            doc.text('Physician:', margin + 5, y + 6);
+            doc.text('Designation:', margin + 92, y + 6);
+
             doc.setFont('helvetica', 'bold');
             doc.setFontSize(8.5);
-            doc.text(doctorName, 18, sigY + 5);
-            doc.setFont('helvetica', 'normal');
-            doc.text('Recommending Intern', 18, sigY + 9);
+            doc.setTextColor(...cBlack);
+            doc.text(doctorName, margin + 24, y + 6);
 
-            // Signature 2: Vice-President
-            doc.line(80, sigY, 130, sigY);
-            doc.setFont('helvetica', 'bold');
-            doc.text('Dr. Miskatul Islam / VP', 80, sigY + 5);
             doc.setFont('helvetica', 'normal');
-            doc.text('Poor Fund In-charge, IDA SMCH', 80, sigY + 9);
+            doc.setFontSize(8);
+            doc.setTextColor(...cDark);
+            doc.text('Intern Doctor, SMCH Chattogram', margin + 114, y + 6);
 
-            // Signature 3: Patients Welfare Secretary
-            doc.line(145, sigY, 192, sigY);
-            doc.setFont('helvetica', 'bold');
-            doc.text('Dr. Aka Devi', 145, sigY + 5);
-            doc.setFont('helvetica', 'normal');
-            doc.text('Patients Welfare Secretary', 145, sigY + 9);
-
-            // Footer Stamp
             doc.setFontSize(7.5);
-            doc.text('System Generated Document • Intern Doctors Association SMCH Chattogram (Session 2026-2027)', 105, 285, { align: 'center' });
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(...cMuted);
+            doc.text('Affiliation:', margin + 5, y + 10.5);
 
-            doc.save(`IDA_PoorFund_Requisition_${regNo.replace(/\s+/g, '_')}.pdf`);
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(7.5);
+            doc.setTextColor(...cDark);
+            doc.text('Southern Medical College & Hospital Wards Roster', margin + 24, y + 10.5);
+
+            // -------------------------------------------------------------
+            // 3. GRID SECTION 2: PATIENT CLINICAL PARTICULARS
+            // -------------------------------------------------------------
+            y += 20;
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(7);
+            doc.setTextColor(...cMuted);
+            doc.text('02 // PATIENT CLINICAL PARTICULARS', margin, y);
+
+            y += 4;
+            doc.setFillColor(...cBgLight);
+            doc.setDrawColor(...cLightBorder);
+            doc.setLineWidth(0.2);
+            doc.roundedRect(margin, y, contentWidth, 22, 1, 1, 'FD');
+
+            // Row 1
+            doc.setFontSize(7.5);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(...cMuted);
+            doc.text('Patient Name:', margin + 5, y + 6.5);
+            doc.text('Hospital Reg:', margin + 92, y + 6.5);
+
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(8.5);
+            doc.setTextColor(...cBlack);
+            doc.text(patientName, margin + 28, y + 6.5);
+            doc.text(regNo, margin + 114, y + 6.5);
+
+            // Thin Inner Divider Line
+            doc.setDrawColor(...cLightBorder);
+            doc.line(margin + 4, y + 11, margin + contentWidth - 4, y + 11);
+
+            // Row 2
+            doc.setFontSize(7.5);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(...cMuted);
+            doc.text('Age / Gender:', margin + 5, y + 17.5);
+            doc.text('Department:', margin + 92, y + 17.5);
+
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(8);
+            doc.setTextColor(...cDark);
+            doc.text(ageGender, margin + 28, y + 17.5);
+
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(...cBlack);
+            doc.text(department, margin + 114, y + 17.5);
+
+            // -------------------------------------------------------------
+            // 4. GRID SECTION 3: FINANCIAL DISBURSEMENT & JUSTIFICATION
+            // -------------------------------------------------------------
+            y += 28;
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(7);
+            doc.setTextColor(...cMuted);
+            doc.text('03 // AID ASSISTANCE & CLINICAL JUSTIFICATION', margin, y);
+
+            y += 4;
+            // Highlighted Amount Card
+            doc.setDrawColor(...cBlack);
+            doc.setLineWidth(0.3);
+            doc.roundedRect(margin, y, contentWidth, 18, 1, 1, 'D');
+
+            doc.setFontSize(7.5);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(...cMuted);
+            doc.text('Fund Category:', margin + 5, y + 7);
+            
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(8.5);
+            doc.setTextColor(...cBlack);
+            doc.text(category, margin + 28, y + 7);
+
+            doc.setFontSize(7);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(...cMuted);
+            doc.text('Disbursement: Direct Hospital Relief Fund Account', margin + 5, y + 13);
+
+            // Approved Amount Pill (Right Side)
+            const amtWidth = 62;
+            const amtX = margin + contentWidth - amtWidth - 4;
+            doc.setFillColor(...cBlack);
+            doc.roundedRect(amtX, y + 3.5, amtWidth, 11, 1, 1, 'F');
+
+            doc.setFontSize(6.5);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(255, 255, 255);
+            doc.text('APPROVED AID:', amtX + 5, y + 10.5);
+
+            doc.setFontSize(9);
+            doc.text(`BDT ${Number(amount).toLocaleString()} /-`, amtX + amtWidth - 4, y + 11, { align: 'right' });
+
+            // Justification Box
+            y += 22;
+            doc.setFontSize(7.5);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(...cMuted);
+            doc.text('Clinical Justification & Medical Necessity:', margin, y);
+
+            y += 3;
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(8);
+            doc.setTextColor(...cDark);
+            
+            const splitPurpose = doc.splitTextToSize(purpose, contentWidth - 10);
+            const boxHeight = Math.max(22, (splitPurpose.length * 4.5) + 6);
+
+            doc.setFillColor(...cBgLight);
+            doc.setDrawColor(...cLightBorder);
+            doc.setLineWidth(0.2);
+            doc.roundedRect(margin, y, contentWidth, boxHeight, 1, 1, 'FD');
+            doc.text(splitPurpose, margin + 5, y + 6);
+
+            // -------------------------------------------------------------
+            // 5. OFFICIAL SIGNATURE LINES
+            // -------------------------------------------------------------
+            const sigY = 246;
+
+            doc.setDrawColor(...cBlack);
+            doc.setLineWidth(0.3);
+
+            const colW = 50;
+            const colGap = (contentWidth - (colW * 3)) / 2;
+
+            // Signature 1
+            const s1X = margin;
+            doc.line(s1X, sigY, s1X + colW, sigY);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(8);
+            doc.setTextColor(...cBlack);
+            doc.text(doctorName, s1X, sigY + 4.5);
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(7);
+            doc.setTextColor(...cMuted);
+            doc.text('Recommending Physician', s1X, sigY + 8.5);
+
+            // Signature 2
+            const s2X = margin + colW + colGap;
+            doc.line(s2X, sigY, s2X + colW, sigY);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(8);
+            doc.setTextColor(...cBlack);
+            doc.text('Dr. Miskatul Islam', s2X, sigY + 4.5);
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(7);
+            doc.setTextColor(...cMuted);
+            doc.text('VP / Poor Fund In-charge', s2X, sigY + 8.5);
+
+            // Signature 3
+            const s3X = margin + (colW * 2) + (colGap * 2);
+            doc.line(s3X, sigY, s3X + colW, sigY);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(8);
+            doc.setTextColor(...cBlack);
+            doc.text('Dr. Aka Devi', s3X, sigY + 4.5);
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(7);
+            doc.setTextColor(...cMuted);
+            doc.text('Patients Welfare Secretary', s3X, sigY + 8.5);
+
+            // -------------------------------------------------------------
+            // 6. ULTRA-MINIMALIST SINGLE-LINE MICRO FOOTER
+            // -------------------------------------------------------------
+            doc.setDrawColor(...cLightBorder);
+            doc.setLineWidth(0.2);
+            doc.line(margin, 276, margin + contentWidth, 276);
+
+            doc.setFontSize(6.5);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(...cMuted);
+            doc.text('IDA SMCH 2026–2027 • Official Patient Aid Requisition • Verified Document', 105, 281, { align: 'center' });
+
+            // Save PDF
+            doc.save(`IDA_Requisition_${regNo.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`);
 
             closeRequisitionModal();
             document.getElementById('requisitionForm').reset();
