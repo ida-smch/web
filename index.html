@@ -925,12 +925,12 @@
             // Approved Amount Pill (Right Side)
             const amtWidth = 62;
             const amtX = margin + contentWidth - amtWidth - 4;
-            doc.setFillColor(...cBlack);
+            doc.setFillColor(211, 211, 211);
             doc.roundedRect(amtX, y + 3.5, amtWidth, 11, 1, 1, 'F');
 
             doc.setFontSize(6.5);
             doc.setFont('helvetica', 'bold');
-            doc.setTextColor(255, 255, 255);
+            doc.setTextColor(0, 0, 0);
             doc.text('APPROVED AID:', amtX + 5, y + 10.5);
 
             doc.setFontSize(9);
