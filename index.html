@@ -772,12 +772,12 @@
             // Header Text Block
             const textLeft = margin + 23;
             doc.setFont('helvetica', 'bold');
-            doc.setFontSize(13);
+            doc.setFontSize(12);
             doc.setTextColor(...cBlack);
             doc.text('INTERN DOCTORS ASSOCIATION (IDA)', textLeft, topY + 5);
 
             doc.setFont('helvetica', 'normal');
-            doc.setFontSize(10);
+            doc.setFontSize(12);
             doc.setTextColor(...cMuted);
             doc.text('DR. OMAR - DR. TAREQ PANEL 26-27', textLeft, topY + 10.5);
 
@@ -917,7 +917,7 @@
             doc.setTextColor(...cBlack);
             doc.text(category, margin + 28, y + 7);
 
-            doc.setFontSize(7);
+            doc.setFontSize(8);
             doc.setFont('helvetica', 'normal');
             doc.setTextColor(...cMuted);
             doc.text('Disbursement: SMCH IDA 26-27 Poor Fund Account', margin + 5, y + 13);
@@ -928,12 +928,12 @@
             doc.setFillColor(211, 211, 211);
             doc.roundedRect(amtX, y + 3.5, amtWidth, 11, 1, 1, 'F');
 
-            doc.setFontSize(6.5);
+            doc.setFontSize(13);
             doc.setFont('helvetica', 'bold');
             doc.setTextColor(0, 0, 0);
-            doc.text('Requested AID:', amtX + 5, y + 10.5);
+            doc.text('REQUESTED AID:', amtX + 5, y + 10.5);
 
-            doc.setFontSize(9);
+            doc.setFontSize(13);
             doc.text(`BDT ${Number(amount).toLocaleString()} /-`, amtX + amtWidth - 4, y + 11, { align: 'right' });
 
             // Justification Box
