@@ -133,7 +133,7 @@
 
         <!-- Mobile Drawer Footer -->
         <div class="p-6 border-t border-editorial-border text-[10px] font-mono text-neutral-500 uppercase tracking-widest text-center">
-            IDA SMCH 26-27<br>© Dr. S. M. Mustaqim Billah
+            IDA SMCH 26-27 • © Battery_Low
         </div>
     </div>
 
@@ -371,7 +371,7 @@
     <!-- FOOTER -->
     <footer class="mt-auto border-t border-editorial-border bg-editorial-card py-8">
         <div class="max-w-7xl mx-auto px-6 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] font-mono text-neutral-500 uppercase tracking-widest">
-            <p>IDA SMCH 26–27<br>© Dr. S. M. Mustaqim Billah</p>
+            <p>IDA SMCH 26–27 • © Battery_Low</p>
         </div>
     </footer>
 
@@ -772,28 +772,28 @@
             // Header Text Block
             const textLeft = margin + 23;
             doc.setFont('helvetica', 'bold');
-            doc.setFontSize(11);
+            doc.setFontSize(13);
             doc.setTextColor(...cBlack);
             doc.text('INTERN DOCTORS ASSOCIATION (IDA)', textLeft, topY + 5);
 
             doc.setFont('helvetica', 'normal');
-            doc.setFontSize(8);
+            doc.setFontSize(10);
             doc.setTextColor(...cMuted);
-            doc.text('Dr. Omar - Dr. Tareq Panel 26-27', textLeft, topY + 10.5);
+            doc.text('DR. OMAR - DR. TAREQ PANEL 26-27', textLeft, topY + 10.5);
 
             doc.setFont('helvetica', 'bold');
-            doc.setFontSize(7.5);
+            doc.setFontSize(9);
             doc.setTextColor(...cDark);
             doc.text('POOR FUND REQUISITION', textLeft, topY + 16);
 
             // Ref & Date Meta (Top Right Align)
             doc.setFont('helvetica', 'bold');
-            doc.setFontSize(7.5);
+            doc.setFontSize(9);
             doc.setTextColor(...cBlack);
             doc.text(refNo, margin + contentWidth, topY + 5, { align: 'right' });
             
             doc.setFont('helvetica', 'normal');
-            doc.setFontSize(7.5);
+            doc.setFontSize(9);
             doc.setTextColor(...cMuted);
             doc.text(`Date: ${dateStr}`, margin + contentWidth, topY + 10.5, { align: 'right' });
 
@@ -1014,7 +1014,7 @@
             doc.setFontSize(6.5);
             doc.setFont('helvetica', 'normal');
             doc.setTextColor(...cMuted);
-            doc.text('IDA SMCH 2026–2027 • Official Patient Aid Requisition • © Battery_Low', 105, 281, { align: 'center' });
+            doc.text('IDA SMCH 2026–2027 • Poor Fund Requisition • © Battery_Low', 105, 281, { align: 'center' });
 
             // Save PDF
             doc.save(`IDA_PF_Requisition_${regNo.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`);
