@@ -437,10 +437,10 @@
                         <select id="reqDepartment" required class="w-full px-4 py-3 border border-editorial-border bg-editorial-bg text-neutral-900 text-xs uppercase focus:outline-none focus:border-neutral-900 rounded-lg">
                             <option value="Internal Medicine">Internal Medicine</option>
                             <option value="General Surgery">General Surgery</option>
-                            <option value="Gynae & Obstetrics">Gynae & Obstetrics</option>
+                            <option value="Gynae & Obstetrics">Gynaecology & Obstetrics</option>
                             <option value="Pediatrics">Pediatrics</option>
-                            <option value="Orthopedics">Orthopedics</option>
-                            <option value="CCU & Emergency">ICU/CCU/HDU & Emergency</option>
+                            <option value="Orthopedics">Orthopedics / ENT</option>
+                            <option value="CCU & Emergency">ICU/CCU/HDU & EMG</option>
                         </select>
                     </div>
 
@@ -451,7 +451,7 @@
                         <select id="reqCategory" required class="w-full px-4 py-3 border border-editorial-border bg-editorial-bg text-neutral-900 text-xs uppercase focus:outline-none focus:border-neutral-900 rounded-lg">
                             <option value="Medicine & Supplies">Medicine & Supplies</option>
                             <option value="Lab Tests & Imaging">Lab Tests & Imaging</option>
-                            <option value="Hospital Bills & Charges">Hospital Bills & Charges</option>
+                            <option value="Hospital Bills & Charges">Hospital Bills</option>
                             <option value="Emergency Surgical Relief">Emergency Relief</option>
                         </select>
                     </div>
@@ -921,7 +921,7 @@
             doc.setFontSize(8);
             doc.setFont('helvetica', 'normal');
             doc.setTextColor(...cMuted);
-            doc.text('Disbursement: SMCH IDA 26-27 Poor Fund Account', margin + 5, y + 13);
+            doc.text('Disbursement From: SMCH IDA 26-27 Poor Fund', margin + 5, y + 13);
 
             // Approved Amount Pill (Right Side)
             const amtWidth = 62;
@@ -932,9 +932,9 @@
             doc.setFontSize(10);
             doc.setFont('helvetica', 'bold');
             doc.setTextColor(0, 0, 0);
-            doc.text('REQUESTED AID:', amtX + 5, y + 10.5);
+            doc.text('REQUESTED:', amtX + 5, y + 10.5);
 
-            doc.setFontSize(12);
+            doc.setFontSize(10);
             doc.text(`BDT ${Number(amount).toLocaleString()} /-`, amtX + amtWidth - 4, y + 11, { align: 'right' });
 
             // Justification Box
