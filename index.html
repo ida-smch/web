@@ -245,21 +245,21 @@
                 <!-- Total Collection -->
                 <div class="p-8 border border-editorial-border bg-editorial-card space-y-3 rounded-2xl shadow-sm">
                     <span class="text-[10px] font-mono uppercase tracking-widest text-neutral-500">Total Collection</span>
-                    <p id="totalCollectionText" class="font-serif text-3xl sm:text-4xl font-bold text-neutral-900">BDT 1500</p>
+                    <p id="totalCollectionText" class="font-serif text-3xl sm:text-4xl font-bold text-neutral-900">BDT 0</p>
                     <p class="text-[11px] text-neutral-500">Accumulated contributions</p>
                 </div>
 
                 <!-- Total Expenditure -->
                 <div class="p-8 border border-editorial-border bg-editorial-card space-y-3 rounded-2xl shadow-sm">
                     <span class="text-[10px] font-mono uppercase tracking-widest text-neutral-500">Total Expenditure</span>
-                    <p id="totalExpenditureText" class="font-serif text-3xl sm:text-4xl font-bold text-neutral-900">BDT 1408</p>
+                    <p id="totalExpenditureText" class="font-serif text-3xl sm:text-4xl font-bold text-neutral-900">BDT 0</p>
                     <p class="text-[11px] text-neutral-500">Disbursed directly for verified patient care</p>
                 </div>
 
                 <!-- Net Reserve Balance -->
                 <div class="p-8 border border-editorial-border bg-editorial-card space-y-3 rounded-2xl shadow-sm">
                     <span class="text-[10px] font-mono uppercase tracking-widest text-neutral-500">Net Reserve Balance</span>
-                    <p id="remainingBalanceText" class="font-serif text-3xl sm:text-4xl font-bold text-neutral-900">BDT 92</p>
+                    <p id="remainingBalanceText" class="font-serif text-3xl sm:text-4xl font-bold text-neutral-900">BDT 0</p>
                     <p class="text-[11px] text-neutral-500">Active funds ready for immediate requisitions</p>
                 </div>
             </div>
@@ -268,7 +268,7 @@
             <div class="p-8 border border-editorial-border bg-editorial-card space-y-4 rounded-2xl shadow-sm">
                 <div class="flex items-center justify-between text-xs tracking-wider uppercase font-mono text-neutral-700">
                     <span>Capital Utilization Percentage</span>
-                    <span id="fundUtilizationPercentage" class="font-bold">93.87%</span>
+                    <span id="fundUtilizationPercentage" class="font-bold">0%</span>
                 </div>
                 <div class="w-full bg-neutral-200 h-2 rounded-full overflow-hidden">
                     <div id="fundProgressBar" class="bg-neutral-900 h-full w-0 transition-all duration-700"></div>
@@ -286,7 +286,7 @@
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-6">
                             <div class="p-5 border border-editorial-border space-y-1 rounded-xl bg-editorial-bg">
                                 <span class="text-[10px] font-mono uppercase tracking-widest text-neutral-500">Medicine & Supplies</span>
-                                <p id="breakdownMedicine" class="font-serif text-2xl font-semibold text-neutral-900">BDT 1408</p>
+                                <p id="breakdownMedicine" class="font-serif text-2xl font-semibold text-neutral-900">BDT 0</p>
                             </div>
                             <div class="p-5 border border-editorial-border space-y-1 rounded-xl bg-editorial-bg">
                                 <span class="text-[10px] font-mono uppercase tracking-widest text-neutral-500">Lab Tests & Imaging</span>
@@ -574,9 +574,9 @@
            3. FINANCIAL LEDGER DATA
            ========================================================================== */
         const financialData = {
-            totalCollection: 0,
+            totalCollection: 1500,
             expenditures: {
-                medicine: 0,
+                medicine: 1408,
                 labTests: 0,
                 hospitalBills: 0,
             }
